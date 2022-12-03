@@ -1,5 +1,7 @@
 package sp.phone.mvp.model;
 
+import android.text.TextUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.justwen.androidnga.cloud.CloudServerManager;
 import com.trello.rxlifecycle2.android.FragmentEvent;
@@ -232,7 +234,9 @@ public class TopicListModel extends BaseModel implements TopicListContract.Model
         if (requestInfo.content != 0) {
             jsonUri.append("content=").append(requestInfo.content).append("&");
         }
-
+        if(!TextUtils.isEmpty(requestInfo.orderBy)){
+            jsonUri.append("order_by=").append(requestInfo.orderBy).append("&");
+        }
         if (!StringUtils.isEmpty(requestInfo.author)) {
             try {
                 if (requestInfo.author.endsWith("&searchpost=1")) {

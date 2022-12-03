@@ -28,8 +28,7 @@ public class WebViewClientEx extends WebViewClient {
     private List<String> mImgUrlList;
 
     private static final String[] NGA_USER_PROFILE_START = {
-            "bbs.ngacn.cc/nuke.php?func=ucp&username=",
-            "bbs.nga.cn/nuke.php?func=ucp&username=",
+            "/nuke.php?func=ucp&username="
     };
 
     private static final String NGA_USER_PROFILE_END = "&";

@@ -41,7 +41,6 @@ import gov.anzong.androidnga.Utils;
 import gov.anzong.androidnga.base.util.ToastUtils;
 import gov.anzong.androidnga.core.data.HtmlData;
 import gov.anzong.androidnga.core.decode.ForumDecoder;
-import gov.anzong.androidnga.util.NetUtil;
 import sp.phone.http.bean.MessageArticlePageInfo;
 import sp.phone.http.bean.ThreadRowInfo;
 import sp.phone.common.PhoneConfiguration;
@@ -569,7 +568,7 @@ public class FunctionUtils {
 
     public static boolean isComment(ThreadRowInfo row) {
 
-        return row.getAlterinfo() == null && row.getAttachs() == null
+        return row.getAlterinfo() == null && row.getAttaches() == null
                 && row.getComments() == null
                 && row.getJs_escap_avatar() == null && row.getLevel() == null
                 && row.getSignature() == null;

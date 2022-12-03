@@ -104,8 +104,8 @@ public class HtmlUtils {
     }
 
     private static String buildAttachment(ThreadRowInfo row, boolean showImage, int imageQuality, List<String> imageUrls) {
-        if (row == null || row.getAttachs() == null
-                || row.getAttachs().size() == 0) {
+        if (row == null || row.getAttaches() == null
+                || row.getAttaches().size() == 0) {
             return "";
         }
         StringBuilder ret = new StringBuilder();
@@ -118,22 +118,22 @@ public class HtmlUtils {
             ret.append("<table style='border:1px solid #b9986e;padding:10px;color:#6b2d25;font-size:10'>");
         }
         ret.append("<tbody>");
-        Iterator<Map.Entry<String, Attachment>> it = row.getAttachs().entrySet()
+        Iterator<Attachment> it = row.getAttaches()
                 .iterator();
         int attachmentCount = 0;
         int imageAttachmentCount = 0;
         while (it.hasNext()) {
-            Map.Entry<String, Attachment> entry = it.next();
+            Attachment entry = it.next();
             // String url = "http://img.nga.178.com/attachments/" +
             // entry.getValue().getAttachurl();
-            String attachUrl = entry.getValue().getAttachurl();
+            String attachUrl = entry.getAttachurl();
             if (attachUrl.contains("mp3")) {
-                ret = buildAudioAttachment(ret, entry.getValue());
+                ret = buildAudioAttachment(ret, entry);
             } else if (attachUrl.contains("mp4")) {
-                ret = buildVideoAttachment(ret, entry.getValue());
+                ret = buildVideoAttachment(ret, entry);
             } else {
                 imageAttachmentCount++;
-                buildImageAttachment(ret, entry.getValue(), imageAttachmentCount, imageUrls);
+                buildImageAttachment(ret, entry, imageAttachmentCount, imageUrls);
             }
             attachmentCount++;
         }
@@ -205,9 +205,7 @@ public class HtmlUtils {
                 avatarUrl = "file:///android_asset/default_avatar.png";
             }
             String content = comment.getContent();
-            int end = content.indexOf("[/b]");
             String time = '(' + comment.getPostdate() + ')';
-            content = content.substring(end + 4);
             content =  ForumDecoder.decode(content, HtmlData.create(content, Utils.getNGAHost()));
             ret.append(String.format("<tr><td width='10%%'> <img src='%s' align='absmiddle' style='max-width:32;' />  <span style='font-weight:bold'>%s %s</span>%s</td></tr>",
                     avatarUrl, author, time, content));

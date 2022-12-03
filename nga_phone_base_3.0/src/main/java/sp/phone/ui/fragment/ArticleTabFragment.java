@@ -261,7 +261,7 @@ public class ArticleTabFragment extends BaseRxFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_goto_floor).setVisible(mReplyCount != 0);
+        //menu.findItem(R.id.menu_goto_floor).setVisible(mReplyCount != 0);
 
         if (ThemeManager.getInstance().isNightModeFollowSystem()) {
             menu.findItem(R.id.menu_nightmode).setVisible(false);

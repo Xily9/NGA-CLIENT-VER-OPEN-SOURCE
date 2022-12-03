@@ -34,6 +34,11 @@ public interface RetrofitService {
     @POST
     Observable<String> post(@Url String url);
 
+
+    @FormUrlEncoded
+    @POST
+    Observable<String> postApp(@Url String url, @FieldMap Map<String, String> map);
+
     @FormUrlEncoded
     @POST("nuke.php")
     Observable<String> post(@FieldMap Map<String, String> map);

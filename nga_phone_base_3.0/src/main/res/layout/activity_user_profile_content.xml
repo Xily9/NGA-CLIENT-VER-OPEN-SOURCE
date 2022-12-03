@@ -254,6 +254,30 @@
                     android:text="N/A"
                     android:textColor="#808080"
                     android:textIsSelectable="false"/>
+
+
+                <TextView
+                    android:id="@+id/tv_user_ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@+id/tv_user_register_time_title"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="北京"
+                    android:textColor="#808080"
+                    android:textIsSelectable="false"/>
+
+                <TextView
+                    android:id="@+id/tv_user_ip_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/tv_user_ip"
+                    android:layout_toStartOf="@+id/tv_user_ip"
+                    android:text="IP属地 : "
+                    android:textColor="#121c46"
+                    android:textIsSelectable="false"/>
+
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 

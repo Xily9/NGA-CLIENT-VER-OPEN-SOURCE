@@ -36,11 +36,9 @@ public class HtmlCommentBuilder implements IHtmlBuild {
                 avatarUrl = "file:///android_asset/default_avatar.png";
             }
             String content = comment.getContent();
-            int end = content.indexOf("[/b]");
             String time = '(' + comment.getPostTime() + ')';
-            content = content.substring(end + 4);
             content = ForumDecoder.decode(content, htmlData, null);
-            ret.append(String.format("<tr><td width='10%%'> <img class='circle' src='%s' />  <span style='font-weight:bold'>%s %s</span>%s</td></tr>",
+            ret.append(String.format("<tr><td width='10%%'> <img class='circle' src='%s' />  <span style='font-weight:bold'>%s %s</span><br/>%s</td></tr>",
                     avatarUrl, author, time, content));
 
         }

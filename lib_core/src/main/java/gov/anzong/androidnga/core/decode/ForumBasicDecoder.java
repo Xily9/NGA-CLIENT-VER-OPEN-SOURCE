@@ -1,6 +1,7 @@
 package gov.anzong.androidnga.core.decode;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import gov.anzong.androidnga.base.util.StringUtils;
 import gov.anzong.androidnga.common.util.LogUtils;
@@ -231,13 +232,15 @@ public class ForumBasicDecoder implements IForumDecoder {
         // [collapse][/collapse]
         content = StringUtils.replaceAll(content, "\\[collapse=(.*?)](.*?)\\[/collapse]", "<div><button onclick='toggleCollapse(this,\"$1\")'>点击显示内容 : $1</button><div name='collapse' class='collapse' style='display:none'>$2</div></div>");
         content = StringUtils.replaceAll(content, "\\[collapse](.*?)\\[/collapse]", "<div><button onclick='toggleCollapse(this)'>点击显示内容</button><div name='collapse' class='collapse'style='display:none' >$1</div></div>");
+        content = StringUtils.replaceAll(content, "<div class=\"collapse_btn\"><a href=\"javascript:;\" onclick=\"collapse\\(this\\);\">\\+</a>(.*?) ...</div>", "<button onclick='toggleCollapse(this,\"$1\")'>点击显示内容 : $1</button>");
+        content = StringUtils.replaceAll(content, "span class=\"collapse_content\"", "div name='collapse' class='collapse' style='display:none'");
+        content = StringUtils.replaceAll(content, "<div class=\"foldSnippet\"><div class=\"foldTxt\">(.*?) \\.\\.\\.</div><div class=\"foldHidden\">", "<div><button onclick='toggleCollapse(this,\"$1\")'>点击显示内容 : $1</button><div name='collapse' class='collapse' style='display:none'>");
 
         // [flash=video]/flash]
         content = StringUtils.replaceAll(content, "\\[flash=video].(.*?)\\[/flash]", "<video src='http://img.ngacn.cc/attachments$1' controls='controls'></video>");
 
         // [flash=audio][/flash]"
         content = StringUtils.replaceAll(content, "\\[flash=audio].(.*?)\\[/flash]", "<audio src='http://img.ngacn.cc/attachments$1&filename=nga_audio.mp3' controls='controls'></audio>");
-
         return content;
     }
 }

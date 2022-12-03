@@ -5,7 +5,8 @@
     <item
         android:id="@+id/menu_goto_floor"
         android:title="@string/goto_floor"
-        androidnga:showAsAction="never"/>
+        android:icon="@drawable/btn_ic_jump_page"
+        androidnga:showAsAction="always"/>
 
     <item
         android:id="@+id/menu_copy_url"
@@ -48,6 +49,6 @@
         android:id="@+id/menu_open_by_browser"
         android:icon="@drawable/btn_ic_browser"
         android:title="@string/menu_title_open_with_preload_browser"
-        androidnga:showAsAction="ifRoom" />
+        androidnga:showAsAction="never" />
 
 </menu>

@@ -3,6 +3,7 @@ package sp.phone.ui.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -177,6 +178,15 @@ public class TopicListFragment extends TopicSearchFragment {
             case R.id.menu_board_head:
                 mPresenter.startArticleActivity(mRequestParam.boardHead, mRequestParam.title + " - 版头");
                 break;
+            case R.id.menu_sort:
+                if (TextUtils.isEmpty(mRequestParam.orderBy) || mRequestParam.orderBy.equals("lastpostdesc")) {
+                    mRequestParam.orderBy = "postdatedesc";
+                    item.setTitle(R.string.menu_sort_post);
+                } else {
+                    mRequestParam.orderBy = "lastpostdesc";
+                    item.setTitle(R.string.menu_sort_date);
+                }
+                refresh();
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import gov.anzong.androidnga.R;
 import gov.anzong.androidnga.base.util.ToastUtils;
 import sp.phone.mvp.presenter.LoginPresenter;
+import sp.phone.util.ForumUtils;
 import sp.phone.util.StringUtils;
 
 /**
@@ -25,7 +26,7 @@ import sp.phone.util.StringUtils;
 
 public class LoginWebFragment extends BaseFragment {
 
-    private static final String URL_LOGIN = "https://ngabbs.com/nuke.php?__lib=login&__act=account&login";
+    private static final String URL_LOGIN = ForumUtils.getAvailableDomain() + "/nuke.php?__lib=login&__act=account&login";
 
     private static final int MAX_PROGRESS = 100;
 
