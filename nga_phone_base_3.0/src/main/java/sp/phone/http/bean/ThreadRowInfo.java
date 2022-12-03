@@ -21,7 +21,7 @@ public class ThreadRowInfo {
     private String alterinfo;// something like "edited by ..."
     private String content;
     private int lou;
-    private Map<String, Attachment> attachs;
+    private List<Attachment> attaches;
     private String level;
     private String yz; //negative integer if user is nuked
     private String js_escap_avatar;//avatar url
@@ -56,12 +56,12 @@ public class ThreadRowInfo {
         return mImageUrlList;
     }
 
-    public int getScore() {
-        return score;
+    public int getVote_good() {
+        return vote_good;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setVote_good(int score) {
+        this.vote_good = score;
     }
 
     public int getScore_2() {
@@ -72,7 +72,7 @@ public class ThreadRowInfo {
         this.score_2 = score_2;
     }
 
-    private int score;
+    private int vote_good;
     private int score_2;
 
     public void set_IsInBlackList(boolean isin) {
@@ -83,12 +83,12 @@ public class ThreadRowInfo {
         return isInBlackList;
     }
 
-    public Map<String, Attachment> getAttachs() {
-        return attachs;
+    public List<Attachment> getAttaches() {
+        return attaches;
     }
 
-    public void setAttachs(Map<String, Attachment> attachs) {
-        this.attachs = attachs;
+    public void setAttches(List<Attachment> attaches) {
+        this.attaches = attaches;
     }
 
     public String getSignature() {

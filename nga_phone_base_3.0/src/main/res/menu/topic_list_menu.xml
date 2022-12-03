@@ -8,25 +8,31 @@
         android:icon="@drawable/btn_ic_star_off"
         android:title="@string/menu_add_bookmark_board"
         android:visible="false"
-        androidnga:showAsAction="ifRoom" />
+        androidnga:showAsAction="always" />
 
     <item
         android:id="@+id/menu_remove_bookmark"
         android:icon="@drawable/btn_ic_star_on"
         android:title="@string/menu_remove_bookmark_board"
         android:visible="false"
-        androidnga:showAsAction="ifRoom" />
+        androidnga:showAsAction="always" />
+
 
     <item
         android:id="@+id/menu_search"
         android:icon="@drawable/btn_ic_search"
         android:title="@string/menu_search"
-        androidnga:showAsAction="ifRoom" />
+        androidnga:showAsAction="always" />
 
     <item
         android:id="@+id/menu_twenty_four"
         android:icon="@drawable/btn_ic_search"
         android:title="@string/twenty_four"
+        androidnga:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_sort"
+        android:title="@string/menu_sort_date"
         androidnga:showAsAction="never" />
 
     <item

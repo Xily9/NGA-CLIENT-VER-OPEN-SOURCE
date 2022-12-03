@@ -3,9 +3,13 @@ body {
     word-break: break-all;
 }
 
-table.default {
+table {
     width: 99.9%;
-    font-size: 21px;
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
     border: 1px solid #aaa;
 }
 
@@ -39,9 +43,61 @@ img.circle {
 img.emoticon {
 }
 
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+li {
+	list-style: inside disc;
+	padding: 0;
+    margin: 0;
+}
+
 img {
     max-width: 100%;
 }
 
 img.invertFilter {
 }
+
+
+.white {color:#fff}
+.defaultcolor {color:#10273f}
+.skyblue {color:skyblue}
+.royalblue {color:royalblue}
+.darkblue {color:darkblue}
+.orangered {color:orangered}
+.crimson {color:crimson}
+.firebrick {color:firebrick}
+.darkred {color:darkred}
+.darkred:hover {color:#713828}
+.limegreen {color:limegreen}
+.seagreen {color:seagreen}
+.teal {color:teal}
+.teal:hover {color:#43B2B2}
+.deeppink {color:deeppink}
+.tomato {color:tomato}
+.coral {color:coral}
+.purple {color:purple}
+.indigo {color:indigo}
+.burlywood {color:burlywood}
+.sandybrown {color:sandybrown}
+.sienna {color:sienna}
+.chocolate {color:chocolate}
+.ngared {color:#591804}
+
+.orange {color:#A06700}
+.orange:hover {color:#EF9C00}
+.green {color:#3D9F0E}
+.green:hover {color:#6ED73A}
+.gray {color:#555}
+.gray:hover {color:#666}
+.red {color:#D00}
+.red:hover {color:#E55}
+.blue {color:#06B}
+.blue:hover {color:#39E}
+.silver {color:#888}
+.silver:hover {color:#AAA}
+.smoke {color:#A9A9A9}
+.smoke:hover {color:#cccccc}

@@ -3,6 +3,7 @@ package sp.phone.mvp.model.convert;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
@@ -12,12 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import gov.anzong.androidnga.Utils;
-import gov.anzong.androidnga.base.util.DeviceUtils;
 import gov.anzong.androidnga.core.HtmlConvertFactory;
 import gov.anzong.androidnga.core.data.AttachmentData;
 import gov.anzong.androidnga.core.data.CommentData;
 import gov.anzong.androidnga.core.data.HtmlData;
-import gov.anzong.androidnga.base.util.ContextUtils;;
+;
 import sp.phone.common.PhoneConfiguration;
 import sp.phone.http.bean.Attachment;
 import sp.phone.http.bean.DiceData;
@@ -53,24 +53,23 @@ public class ArticleConvertFactory {
                 js = js.substring(0, js.indexOf("/*error fill content"));
             }
 
-            js = js.replaceAll("/\\*\\$js\\$\\*/", "")
-                    .replaceAll("\"content\":\\+(\\d+),", "\"content\":\"+$1\",")
-                    .replaceAll("\"subject\":\\+(\\d+),", "\"subject\":\"+$1\",")
-                    .replaceAll("\"content\":(0\\d+),", "\"content\":\"$1\",")
-                    .replaceAll("\"subject\":(0\\d+),", "\"subject\":\"$1\",")
-                    .replaceAll("\"author\":(0\\d+),", "\"author\":\"$1\",")
-                    .replaceAll("\"alterinfo\":\"\\[(\\w|\\s)+\\]\\s+\",", ""); //部分页面打不开的问题
-//            NLog.e(js);
-            JSONObject obj = (JSONObject) JSON.parseObject(js).get("data");
+//            js = js.replaceAll("/\\*\\$js\\$\\*/", "")
+//                    .replaceAll("\"content\":\\+(\\d+),", "\"content\":\"+$1\",")
+//                    .replaceAll("\"subject\":\\+(\\d+),", "\"subject\":\"+$1\",")
+//                    .replaceAll("\"content\":(0\\d+),", "\"content\":\"$1\",")
+//                    .replaceAll("\"subject\":(0\\d+),", "\"subject\":\"$1\",")
+//                    .replaceAll("\"author\":(0\\d+),", "\"author\":\"$1\",")
+//                    .replaceAll("\"alterinfo\":\"\\[(\\w|\\s)+\\]\\s+\",", ""); //部分页面打不开的问题
+            JSONObject obj = (JSONObject) JSON.parseObject(js);
             NLog.d(TAG, "js = :\n" + js);
-            if (obj == null) {
+            if (obj == null || obj.getInteger("code") != 0) {
                 return null;
             }
-            int allRows = (Integer) obj.get("__ROWS");
+            int allRows = (Integer) obj.get("vrows");
             data = new ThreadData();
             data.setRawData(js);
             data.setThreadInfo(buildThreadPageInfo(obj));
-            data.setRowList(buildThreadRowList(obj));
+            data.setRowList(buildThreadRowList(data.getThreadInfo(), obj));
             data.set__ROWS(allRows);
             data.setRowNum(data.getRowList().size());
         } catch (Exception e) {
@@ -81,34 +80,27 @@ public class ArticleConvertFactory {
     }
 
     private static ThreadPageInfo buildThreadPageInfo(JSONObject obj) {
-        JSONObject subObj = (JSONObject) obj.get("__T");
-        if (subObj == null) {
-            return null;
-        }
-        try {
-            return JSONObject.toJavaObject(subObj, ThreadPageInfo.class);
-        } catch (RuntimeException e) {
-            NLog.e(TAG, subObj.toJSONString());
-        }
-        return null;
+        ThreadPageInfo threadPageInfo = new ThreadPageInfo();
+        threadPageInfo.setAuthorId(obj.getInteger("tauthorid"));
+        threadPageInfo.setSubject(obj.getString("tsubject"));
+        threadPageInfo.setFid(obj.getInteger("fid"));
+        return threadPageInfo;
     }
 
-    private static List<ThreadRowInfo> buildThreadRowList(JSONObject obj) {
-        JSONObject subObj = (JSONObject) obj.get("__R");
-        int rows = (Integer) obj.get("__R__ROWS");
-        JSONObject userInfoMap = (JSONObject) obj.get("__U");
-        if (subObj == null) {
+    private static List<ThreadRowInfo> buildThreadRowList(ThreadPageInfo threadPageInfo, JSONObject obj) {
+        JSONArray subArr = (JSONArray) obj.get("result");
+        if (subArr == null) {
             return new ArrayList<>();
         }
-        return convertJsObjToList(subObj, rows, userInfoMap);
+        return convertJsObjToList(threadPageInfo, subArr);
     }
 
 
-    private static List<ThreadRowInfo> convertJsObjToList(JSONObject rowMap, int count, JSONObject userInfoMap) {
+    private static List<ThreadRowInfo> convertJsObjToList(ThreadPageInfo threadPageInfo, JSONArray rowArr) {
         List<ThreadRowInfo> rowList = new ArrayList<>();
         NLog.d("ArticleUtil", "convertJsObjToList");
-        for (int i = 0; i < count; i++) {
-            Object obj = rowMap.get(String.valueOf(i));
+        for (int i = 0; i < rowArr.size(); i++) {
+            Object obj = rowArr.get(i);
             JSONObject rowObj;
             if (obj instanceof JSONObject) {
                 rowObj = (JSONObject) obj;
@@ -117,20 +109,23 @@ public class ArticleConvertFactory {
             }
             ThreadRowInfo row = JSONObject.toJavaObject(rowObj, ThreadRowInfo.class);
             buildRowHotReplay(row, rowObj);
-            buildRowComment(row, rowObj, userInfoMap);
+            buildRowComment(row, rowObj);
             buildRowClientInfo(row, rowObj);
-            buildRowUserInfo(row, userInfoMap);
+            buildRowUserInfo(row,rowObj);
             buildRowVote(row, rowObj);
-            buildRowContent(row);
+            buildRowContent(row, threadPageInfo);
             rowList.add(row);
         }
         return rowList;
     }
 
-    private static void buildRowContent(ThreadRowInfo row) {
+    private static void buildRowContent(ThreadRowInfo row, ThreadPageInfo threadPageInfo) {
         if (row.getContent() == null) {
             row.setContent(row.getSubject());
             row.setSubject(null);
+        }
+        if(TextUtils.isEmpty(row.getSubject()) && row.getPid() == 0){
+            row.setSubject(threadPageInfo.getSubject());
         }
         if (!StringUtils.isEmpty(row.getFromClient())
                 && row.getFromClient().startsWith("103 ")
@@ -165,12 +160,12 @@ public class ArticleConvertFactory {
         htmlData.setSubject(row.getSubject());
         htmlData.setShowImage(PhoneConfiguration.getInstance().isImageLoadEnabled());
         htmlData.setNGAHost(Utils.getNGAHost());
-        if (row.getAttachs() != null) {
+        if (row.getAttaches() != null) {
             List<AttachmentData> attachments = new ArrayList<>();
-            for (Map.Entry<String, Attachment> entry : row.getAttachs().entrySet()) {
+            for (Attachment entry : row.getAttaches()) {
                 AttachmentData data = new AttachmentData();
-                data.setAttachUrl(entry.getValue().getAttachurl());
-                data.setThumb(entry.getValue().getThumb());
+                data.setAttachUrl(entry.getAttachurl());
+                data.setThumb(entry.getThumb());
                 data.setAttachmentHost(HttpUtil.NGA_ATTACHMENT_HOST);
                 attachments.add(data);
             }
@@ -214,10 +209,10 @@ public class ArticleConvertFactory {
     }
 
     //解析贴条
-    private static void buildRowComment(ThreadRowInfo row, JSONObject rowObj, JSONObject userInfoMap) {
-        JSONObject commObj = (JSONObject) rowObj.get("comment");
-        if (commObj != null) {
-            row.setComments(convertJsObjToList(commObj, commObj.size(), userInfoMap));
+    private static void buildRowComment(ThreadRowInfo row, JSONObject rowObj) {
+        JSONArray commArr = (JSONArray) rowObj.get("comments");
+        if (commArr != null) {
+            row.setComments(convertJsObjToList(null, commArr));
         }
     }
 
@@ -245,41 +240,18 @@ public class ArticleConvertFactory {
         }
     }
 
-    private static void buildRowUserInfo(ThreadRowInfo row, JSONObject userInfoMap) {
-        if (row.getAuthorid() == 0) {
-            return;
-        }
-        JSONObject userInfo = (JSONObject) userInfoMap.get(String.valueOf(row
-                .getAuthorid()));
-        JSONObject groupObj = userInfoMap.getJSONObject("__GROUPS");
+    private static void buildRowUserInfo(ThreadRowInfo row,JSONObject rowObj) {
+        JSONObject userInfo = (JSONObject) rowObj.getJSONObject("author");
 
         if (userInfo == null) {
             return;
         }
-        int uid = row.getAuthorid();
+        int uid = userInfo.getInteger("uid");
+        row.setAuthorid(uid);
         row.set_IsInBlackList(UserManagerImpl.getInstance().checkBlackList(String.valueOf(uid)));
-        String t1 = "甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥";
-        String t2 = "王李张刘陈杨黄吴赵周徐孙马朱胡林郭何高罗郑梁谢宋唐许邓冯韩曹曾彭萧蔡潘田董袁于余叶蒋杜苏魏程吕丁沈任姚卢傅钟姜崔谭廖范汪陆金石戴贾韦夏邱方侯邹熊孟秦白江阎薛尹段雷黎史龙陶贺顾毛郝龚邵万钱严赖覃洪武莫孔汤向常温康施文牛樊葛邢安齐易乔伍庞颜倪庄聂章鲁岳翟殷詹申欧耿关兰焦俞左柳甘祝包宁尚符舒阮柯纪梅童凌毕单季裴霍涂成苗谷盛曲翁冉骆蓝路游辛靳管柴蒙鲍华喻祁蒲房滕屈饶解牟艾尤阳时穆农司卓古吉缪简车项连芦麦褚娄窦戚岑景党宫费卜冷晏席卫米柏宗瞿桂全佟应臧闵苟邬边卞姬师和仇栾隋商刁沙荣巫寇桑郎甄丛仲虞敖巩明佘池查麻苑迟邝 ";
-        if (userInfo.getString("username").length() == 39
-                && userInfo.getString("username").startsWith("#anony_")) {
-            StringBuilder builder = new StringBuilder();
-            String username = userInfo.getString("username");
-            int i = 6;
-            for (int j = 0; j < 6; j++) {
-                int pos;
-                if (j == 0 || j == 3) {
-                    pos = Integer.valueOf(username.substring(i + 1, i + 2), 16);
-                    builder.append(t1.charAt(pos));
-                } else {
-                    pos = Integer.valueOf(username.substring(i, i + 2), 16);
-                    builder.append(t2.charAt(pos));
-                }
-                i += 2;
-            }
-            row.setAuthor(builder.toString());
+        row.setAuthor(userInfo.getString("username"));
+        if (userInfo.getInteger("uid") == -1) {
             row.setISANONYMOUS(true);
-        } else {
-            row.setAuthor(userInfo.getString("username"));
         }
         row.setJs_escap_avatar(userInfo.getString("avatar"));
         row.setYz(userInfo.getString("yz"));
@@ -293,8 +265,8 @@ public class ArticleConvertFactory {
 
         try {
             row.setPostCount(userInfo.getString("postnum"));
-            row.setReputation(Float.parseFloat(userInfo.getString("rvrc")) / 10.0f);
-            row.setMemberGroup(groupObj.getJSONObject(userInfo.getString("memberid")).getString("0"));
+            row.setReputation(Float.parseFloat(userInfo.getString("rvrc")));
+            row.setMemberGroup(userInfo.getString("member"));
         } catch (Exception e) {
         }
 

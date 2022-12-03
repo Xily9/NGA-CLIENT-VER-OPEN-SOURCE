@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import gov.anzong.androidnga.base.util.ContextUtils;
@@ -29,7 +30,9 @@ import sp.phone.mvp.model.convert.ArticleConvertFactory;
 import sp.phone.mvp.model.convert.ErrorConvertFactory;
 import sp.phone.param.ArticleListParam;
 import sp.phone.rxjava.BaseSubscriber;
+import sp.phone.util.ForumUtils;
 import sp.phone.util.NLog;
+import sp.phone.util.SignUtil;
 
 /**
  * 加载帖子内容
@@ -67,15 +70,29 @@ public class ArticleListModel extends BaseModel implements ArticleListContract.M
 
     }
 
-    @Override
-    public void loadPage(ArticleListParam param, final OnHttpCallBack<ThreadData> callBack) {
-        loadPage(param, null, callBack);
-    }
 
     @Override
     public void loadPage(ArticleListParam param, Map<String, String> header, OnHttpCallBack<ThreadData> callBack) {
-        String url = getUrl(param);
-        mService.get(url, header)
+        loadPage(param, callBack);
+    }
+
+    @Override
+    public void loadPage(ArticleListParam param, final OnHttpCallBack<ThreadData> callBack) {
+        String url = ForumUtils.getAvailableDomain()+"/app_api.php?__lib=post&__act=list&";
+        Map<String, String> map = new HashMap<>();
+        long time = System.currentTimeMillis() / 1000;
+        map.put("tid", String.valueOf(param.tid));
+        if (param.pid > 0) {
+            map.put("pid", String.valueOf(param.pid));
+        }
+        map.put("page", String.valueOf(param.page));
+        map.put("access_token", UserManagerImpl.getInstance().getCid());
+        map.put("app_id", "1010");
+        map.put("t", String.valueOf(time));
+        map.put("access_uid", UserManagerImpl.getInstance().getUserId());
+        map.put("sign", SignUtil.sign(!UserManagerImpl.getInstance().hasValidUser(),
+                time, String.valueOf(param.tid)));
+        mService.postApp(url, map)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
                 .compose(getLifecycleProvider().<String>bindUntilEvent(FragmentEvent.DETACH))

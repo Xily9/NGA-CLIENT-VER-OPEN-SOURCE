@@ -21,11 +21,11 @@ android {
             if (isJenkins()) {
                 storeFile file('../../android19910914.keystore')
             } else {
-                storeFile file('..\\keystore\\android19910914.keystore')
+                storeFile file('..\\androidKey')
             }
-            storePassword '19910914'
-            keyAlias 'android.keystore'
-            keyPassword '19910914'
+            storePassword 'zsqqq1996424'
+            keyAlias 'FzuHelpkey'
+            keyPassword 'zsqqq1996424'
         }
     }
 

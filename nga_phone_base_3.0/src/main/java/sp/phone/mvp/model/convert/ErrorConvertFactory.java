@@ -21,14 +21,21 @@ public class ErrorConvertFactory {
             return "请重新登录";
         } else if (js.contains("无此页")) {
             return ContextUtils.getString(R.string.last_page_prompt);
-        } else {
+        } else if(js.contains("__MESSAGE")){
             try {
                 JSONObject obj = (JSONObject) JSON.parse(js);
                 obj = (JSONObject) obj.get("data");
                 obj = (JSONObject) obj.get("__MESSAGE");
                 return obj.getString("1");
             } catch (Exception e) {
-                return null;
+                return "NGA后台抽风了，请尝试右上角菜单中的使用内置浏览器打开";
+            }
+        }else{
+            try {
+                JSONObject obj = (JSONObject) JSON.parse(js);
+                return obj.getString("msg");
+            } catch (Exception e) {
+                return "NGA后台抽风了，请尝试右上角菜单中的使用内置浏览器打开";
             }
         }
     }

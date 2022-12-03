@@ -52,18 +52,18 @@ public class BoardModel extends BaseModel implements BoardContract.Model {
 
         for (CategoryBean categoryBean : beans) {
             BoardCategory category = new BoardCategory(categoryBean.getName());
-            for (CategoryBean.SubBean subBean : categoryBean.getSub()) {
-                BoardCategory subCategory = new BoardCategory(subBean.getName());
-                for (CategoryBean.SubBean.ContentBean contentBean : subBean.getContent()) {
+            for (CategoryBean.GroupBean groupBean : categoryBean.getGroups()) {
+                BoardCategory subCategory = new BoardCategory(groupBean.getName());
+                for (CategoryBean.GroupBean.ForumBean forumBean : groupBean.getForums()) {
                     String boardName;
-                    if (TextUtils.isEmpty(contentBean.getNameS())) {
-                        boardName = contentBean.getName();
+                    if (TextUtils.isEmpty(forumBean.getNameS())) {
+                        boardName = forumBean.getName();
                     } else {
-                        boardName = contentBean.getNameS();
+                        boardName = forumBean.getNameS();
                     }
 
-                    Board board = new Board(contentBean.getFid(), contentBean.getStid(), boardName);
-                    board.setBoardHead(contentBean.getHead());
+                    Board board = new Board(forumBean.getFid(), forumBean.getStid(), boardName);
+                    board.setBoardHead(forumBean.getHead());
                     subCategory.addBoard(board);
 
                 }

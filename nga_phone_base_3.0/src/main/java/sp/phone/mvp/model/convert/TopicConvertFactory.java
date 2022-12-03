@@ -183,10 +183,14 @@ public class TopicConvertFactory {
             }
             ThreadPageInfo pageInfo = new ThreadPageInfo();
             String author = tBean.getAuthor();
+            String authorId = tBean.getAuthorid();
             if (author.startsWith("#anony_")) {
                 pageInfo.setAnonymity(true);
                 pageInfo.setAuthor(getAnonymityName(tBean.getAuthor()));
-            } else {
+            } else if(authorId.startsWith("#anony_")) {
+                pageInfo.setAnonymity(true);
+                pageInfo.setAuthor(getAnonymityName(tBean.getAuthorid()));
+            }else{
                 pageInfo.setAuthorId(Integer.parseInt(tBean.getAuthorid()));
                 pageInfo.setAuthor(tBean.getAuthor());
             }
